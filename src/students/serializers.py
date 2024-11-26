@@ -45,7 +45,7 @@ class StudentProfilePicUpdateSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['profile_pic',
                   'profile_pic_url'
-                  ]  # Only include the profile_pic field in the serializer
+                  ] 
     def get_profile_pic_url(self,obj):
         request=self.context.get('request')
         if obj.profile_pic:

@@ -14,7 +14,7 @@ class ViewAllStudentsView(generics.ListAPIView):
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
 
-
+list_view_all_student=ViewAllStudentsView.as_view()
 class FacultyCreateStudentView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsFacultyPermission]
     serializer_class = StudentSerializer
