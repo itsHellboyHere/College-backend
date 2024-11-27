@@ -147,6 +147,7 @@ USE_TZ = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173", 
+    "https://college-erp-omgv.onrender.com"
    
 ]
 
