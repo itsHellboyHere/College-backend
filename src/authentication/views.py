@@ -77,8 +77,7 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        # Optional: If you're using a JWT blacklist, add code here to blacklist the JWT token
-        # No need to delete token server-side if JWT is client-managed
+      
         return Response({"message": "User logged out successfully!"}, status=200)
 
 logout_view = LogoutView.as_view()

@@ -39,12 +39,12 @@ class StudentDetailCreateView(generics.CreateAPIView):
         if hasattr(user, 'student_profile'):
             raise serializers.ValidationError({'error': 'Student details already exist for this user.'})
 
-        # Create a new student profile
+     
         student = serializer.save(user=user)
         return Response(
             {
                 'message': 'Student details added successfully!',
-                'id': student.id,  # Include the student ID in the response
+                'id': student.id,  
                 'data': serializer.data
             },
             status=status.HTTP_201_CREATED
