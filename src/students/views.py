@@ -99,21 +99,16 @@ class StudentProfilePicUpdateView(generics.UpdateAPIView):
     serializer_class = StudentProfilePicUpdateSerializer
 
     def get_object(self):
-        
         user = self.request.user
         if not hasattr(user, 'student_profile'):
-            raise serializers.ValidationError("Student profile not found for this user.")
+            raise ValidationError("Student details not found for this user.")
         return user.student_profile
 
     def update(self, request, *args, **kwargs):
-        
-        partial = kwargs.pop('partial', True)
-        response = super().update(request, partial=partial, *args, **kwargs)
+     
+        response = super().update(request, partial=False, *args, **kwargs)
         return Response(
-            {
-                'message': 'Profile picture updated successfully!',
-                'data': response.data
-            },
+            {'message': 'Student details updated successfully!', 'data': response.data},
             status=status.HTTP_200_OK
         )
 student_profile_pic_update_view=StudentProfilePicUpdateView.as_view()

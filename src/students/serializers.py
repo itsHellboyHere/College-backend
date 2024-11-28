@@ -18,7 +18,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
 
-    subjects = SubjectSerializer(many=True,required=False)
+    subjects = SubjectSerializer(many=True,required=False, read_only=True)
     class Meta:
         model=Student
         fields = [
@@ -35,8 +35,14 @@ class StudentSerializer(serializers.ModelSerializer):
             # 'profile_pic_url',
              # Read-only field for the profile picture URL
         ]
-        # read_only_fields = ['profile_pic_url'] 
-    
+   
+    def update(self, instance, validated_data):
+      
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
     
 class StudentProfilePicUpdateSerializer(serializers.ModelSerializer):
     profile_pic = serializers.ImageField(required=False, allow_null=True)
