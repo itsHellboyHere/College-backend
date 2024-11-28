@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from api.permissions import IsStudentPermission
+from api.permissions import IsStudentPermission,IsFacultyPermission
 from rest_framework_simplejwt.authentication import JWTAuthentication 
 from subjects.models import Subject
 # Create your views here.
@@ -53,7 +53,7 @@ class StudentDetailCreateView(generics.CreateAPIView):
 student_detail_create_view = StudentDetailCreateView.as_view()
 
 class StudentDetailView(generics.RetrieveAPIView):
-    permission_classes=[IsAuthenticated,IsStudentPermission]
+    permission_classes=[IsAuthenticated,IsStudentPermission,IsFacultyPermission]
     queryset=Student.objects.all()
     lookup_field='id'
     serializer_class=StudentSerializer

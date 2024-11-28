@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('create-subject/', views.create_subject_view, name='create-subject'),
-    path('assign-subject/<int:student_id>/', views.assign_subject_to_student, name='assign-subject')
+    path('assign-subject/<int:student_id>/', views.assign_subject_to_student, name='assign-subject'),
+    path('all/', views.get_all_subjects_view, name='subject-list'),
    
 ]
