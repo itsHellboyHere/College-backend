@@ -53,7 +53,7 @@ class StudentDetailCreateView(generics.CreateAPIView):
 student_detail_create_view = StudentDetailCreateView.as_view()
 
 class StudentDetailView(generics.RetrieveAPIView):
-    permission_classes=[IsAuthenticated,IsStudentPermission,IsFacultyPermission]
+    permission_classes=[IsAuthenticated,IsStudentPermission]
     queryset=Student.objects.all()
     lookup_field='id'
     serializer_class=StudentSerializer

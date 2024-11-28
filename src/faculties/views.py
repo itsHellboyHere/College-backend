@@ -9,6 +9,9 @@ from api.permissions import IsFacultyPermission
 from django.utils.crypto import get_random_string
 from authentication.models import User
 from rest_framework.exceptions import NotFound
+from rest_framework import serializers
+from students.serializers import StudentSerializer
+from api.permissions import IsFacultyPermission,IsStudentPermission
 # Create your views here.
 class ViewAllStudentsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -57,3 +60,19 @@ class SingleStudentView(generics.RetrieveAPIView):
         except Student.DoesNotExist:
             raise NotFound(detail="Student not found.")
 get_single_student_view=SingleStudentView.as_view()
+
+
+class StudentDetailView(generics.RetrieveAPIView):
+    permission_classes=[IsAuthenticated,IsFacultyPermission]
+    queryset=Student.objects.all()
+    lookup_field='id'
+    serializer_class=StudentSerializer
+    serializer_class = StudentSerializer
+    def get_object(self):
+        
+        try:
+            return self.request.user.student_profile
+        except Student.DoesNotExist:
+            raise serializers.ValidationError("Student details not found for this user.")
+
+student_list_view=StudentDetailView.as_view()
