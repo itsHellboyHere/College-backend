@@ -57,4 +57,9 @@ class StudentProfilePicUpdateSerializer(serializers.ModelSerializer):
         if obj.profile_pic:
             return request.build_absolute_uri(obj.profile_pic.url)
         return None
+    def update(self, instance, validated_data):
+        if 'profile_pic' in validated_data:
+            instance.profile_pic = validated_data.get('profile_pic')
 
+        instance.save()
+        return instance

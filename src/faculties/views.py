@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.shortcuts import render
+from django.core.mail import send_mail
 from rest_framework import generics,status
 from rest_framework.response import Response
 from faculties.models import Faculty
@@ -8,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from api.permissions import IsFacultyPermission
 from django.utils.crypto import get_random_string
 from authentication.models import User
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound,ValidationError
 from rest_framework import serializers
 from students.serializers import StudentSerializer
 from api.permissions import IsFacultyPermission,IsStudentPermission
@@ -24,9 +26,12 @@ class FacultyCreateStudentView(generics.ListCreateAPIView):
     serializer_class = StudentSerializer
 
     def perform_create(self, serializer):
-        # Create User for the Student
+       
         username = serializer.validated_data['first_name'].lower() + get_random_string(5)
         password = get_random_string(8)
+        email=self.request.data.get('email',None)
+        if not email:
+            raise ValidationError({"email": "Email is required."})
         user = User.objects.create_user(
             username=username,
             password=password,
@@ -35,9 +40,38 @@ class FacultyCreateStudentView(generics.ListCreateAPIView):
         
      
         student = serializer.save(user=user)
-    
         faculty = Faculty.objects.get(user=self.request.user)  
         faculty.students.add(student)  
+        subject = "Welcome to the University"
+        message = (
+            f"Dear {serializer.validated_data['first_name']},\n\n"
+            f"Your student account has been created successfully. Below are your login details:\n\n"
+            f"Username: {username}\n"
+            f"Password: {password}\n\n"
+            f"Please log in.\n\n"
+            f"Best regards,\nThe University Team"
+        )
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER, 
+            [email], 
+            fail_silently=False,  
+        )
+        return student
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        student = self.perform_create(serializer)
+
+ 
+        response_data = {
+            "message": f"Student '{serializer.validated_data['first_name']}' was created successfully.",
+            "email": request.data.get('email'),
+            "student_id": student.id,
+        }
+        return Response(response_data, status=status.HTTP_201_CREATED)
     
 faculty_create_student_view = FacultyCreateStudentView.as_view()
 
