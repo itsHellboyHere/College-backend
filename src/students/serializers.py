@@ -31,9 +31,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'contact_number',
             'address',
             'subjects'
-            # 'profile_pic',
-            # 'profile_pic_url',
-             # Read-only field for the profile picture URL
+         
         ]
    
     def update(self, instance, validated_data):
@@ -53,10 +51,9 @@ class StudentProfilePicUpdateSerializer(serializers.ModelSerializer):
                   'profile_pic_url'
                   ] 
     def get_profile_pic_url(self,obj):
-        request=self.context.get('request')
         if obj.profile_pic:
-            return request.build_absolute_uri(obj.profile_pic.url)
-        return None
+            return self.context['request'].build_absolute_uri(obj.profile_pic.url)
+        return "https://via.placeholder.com/150"  
     def update(self, instance, validated_data):
         if 'profile_pic' in validated_data:
             instance.profile_pic = validated_data.get('profile_pic')

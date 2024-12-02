@@ -52,6 +52,30 @@ class StudentDetailCreateView(generics.CreateAPIView):
 
 student_detail_create_view = StudentDetailCreateView.as_view()
 
+
+class StudentProfilePicView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # First, try to get the student profile for the logged-in user
+        user = request.user
+        try:
+            student = user.student_profile  # Ensure student is fetched here
+        except Student.DoesNotExist:
+            raise ValidationError("No student profile found for this user.")
+        
+        # Now you can create the correct serializer (StudentProfilePicUpdateSerializer)
+        serializer = StudentProfilePicUpdateSerializer(student, context={'request': request})
+
+        # Return the profile picture URL (or a placeholder if none exists)
+        return Response(
+            {
+                'profile_pic_url': serializer.data.get('profile_pic_url', "https://via.placeholder.com/150")
+            }
+        )
+
+get_profile_pic_view=StudentProfilePicView.as_view()
+
 class StudentDetailView(generics.RetrieveAPIView):
     permission_classes=[IsAuthenticated,IsStudentPermission]
     queryset=Student.objects.all()
